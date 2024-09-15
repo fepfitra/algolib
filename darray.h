@@ -21,3 +21,5 @@ int darrayFind(darray *vec, void *item);
 // void darrayRemove(darray *vec, void *item);
 
 void darrayPrint(char *format, darray *vec);
+
+void darrayDestroy(darray *vec);

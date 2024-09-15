@@ -104,3 +104,10 @@ void darrayPrint(char *format, darray *vec) {
   }
   printf("]\n");
 }
+
+void darrayDestroy(darray *vec) {
+  free(vec->items);
+  vec->items = NULL;
+  vec->size = 0;
+  vec->capacity = 0x0;
+}
