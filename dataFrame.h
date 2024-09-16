@@ -1,10 +1,9 @@
 #include "darray.h"
 
 typedef struct {
-  unsigned int size;
   darray *columns;
-  darray *items;
+  darray *rows;
 } dataFrame ;
 
 void dataFrameInit(dataFrame *df);
-void dataFrameLoadFromCSV(dataFrame *df, const char *fileName);
+void dataFrameLoadFromCSV(dataFrame *df, const char *fileName, unsigned int bufferSize);
