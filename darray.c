@@ -24,30 +24,39 @@ void *darrayAt(darray *vec, unsigned int index) {
 void darrayResize(darray *vec, int new_size) {
   assert(new_size > 0);
   vec->capacity = new_size;
-  void **new_items = malloc(sizeof(void *) * vec->capacity);
-  new_items = vec->items;
-  free(vec->items);
+
+  void **new_items = realloc(vec->items, sizeof(void *) * vec->capacity);
+
+  if (new_items == NULL) {
+    perror("Memory allocation failed");
+    exit(EXIT_FAILURE);
+  }
+
   vec->items = new_items;
 }
 
 void darrayPush(darray *vec, void *item) {
   if (vec->size == vec->capacity) {
-    darrayResize(vec, vec->capacity * 2);
+    darrayResize(vec, vec->capacity * 1.5);
   }
-  *(vec->items + sizeof(void *) * vec->size) = item;
+  vec->items[vec->size] = item;
   vec->size++;
 }
 
 void darrayInsert(darray *vec, int index, void *item) {
-  assert(index > 0 && index < vec->size);
+  assert(index >= 0 && index <= vec->size);
+
   if (vec->size == vec->capacity) {
-    darrayResize(vec, vec->capacity * 2);
+    int new_capacity = vec->capacity > 0 ? vec->capacity * 1.5 : 1;
+    darrayResize(vec, new_capacity);
   }
+
   for (int i = vec->size - 1; i >= index; i--) {
-    *(vec->items + sizeof(void *) * (i + 1)) =
-        *(vec->items + sizeof(void *) * i);
+    vec->items[i + 1] = vec->items[i];
   }
-  *(vec->items + sizeof(void *) * index) = item;
+
+  vec->items[index] = item;
+
   vec->size++;
 }
 
@@ -56,9 +65,9 @@ void *darrayPop(darray *vec) {
   if (vec->size <= vec->capacity / 4) {
     darrayResize(vec, vec->capacity / 2);
   }
-  void *ret_val = *(vec->items + sizeof(void *) * (vec->size - 1));
+  void *ret_val = vec->items[vec->size - 1];
 
-  *(vec->items + sizeof(void *) * (vec->size - 1)) = NULL;
+  vec->items[vec->size - 1] = NULL;
   vec->size--;
   return ret_val;
 }
@@ -69,17 +78,19 @@ void darrayDelete(darray *vec, int index) {
     // half the capacity in resize
     darrayResize(vec, vec->capacity / 2);
   }
-  *(vec->items + sizeof(void *) * index) = NULL;
+  vec->items[index] = NULL;
   for (int i = index; i < vec->size; i++) {
-    *(vec->items + sizeof(void *) * i) =
-        *(vec->items + sizeof(void *) * (i + 1));
+    vec->items[i] = vec->items[i + 1];
   }
   vec->size--;
 }
 
 int darrayFind(darray *vec, void *item) {
   for (int i = 0; i < vec->size; i++) {
-    if (*(vec->items + sizeof(void *) * i) == item) {
+    // if (*(vec->items + sizeof(void *) * i) == item) {
+    //   return i;
+    // }
+    if (vec->items[i] == item) {
       return i;
     }
   }
@@ -97,7 +108,7 @@ int darrayFind(darray *vec, void *item) {
 void darrayPrint(char *format, darray *vec) {
   printf("[");
   for (int i = 0; i < vec->size; i++) {
-    printf(format, *(vec->items + sizeof(void *) * i));
+    printf(format, vec->items[i]);
     if (i < vec->size - 1) {
       printf(", ");
     }

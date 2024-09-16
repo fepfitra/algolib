@@ -9,16 +9,12 @@ int main() {
   puts("");
 
   printf("Pushing darray...\n");
-  darrayPush(&vec, (void *)1);
-  darrayPush(&vec, (void *)2);
-  darrayPush(&vec, (void *)3);
-  darrayPush(&vec, (void *)4);
-  darrayPush(&vec, (void *)4);
-  darrayPush(&vec, (void *)4);
-  darrayPush(&vec, (void *)4);
-  darrayPush(&vec, (void *)5);
-  darrayPush(&vec, (void *)6);
+  for (int i=0; i<100000; i++) {
+    printf("Pushing %d\n", i);
+    darrayPush(&vec, (void *)i);
+  }
   darrayPrint("%d", &vec);
+  printf("Size : %d\n", vec.size);
   puts("");
 
   printf("Inserting 10 in 3...\n");
