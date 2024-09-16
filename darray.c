@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6,13 +7,15 @@ typedef struct {
   void **items;
   unsigned int size;
   unsigned int capacity;
+  bool storeHeapRef;
 } darray;
 
 const unsigned int DARRAY_INIT_CAPACITY = 0x10;
 
-void darrayInit(darray *vec) {
+void darrayInit(darray *vec, bool storeHeapRef) {
   vec->capacity = DARRAY_INIT_CAPACITY;
   vec->size = 0;
+  vec->storeHeapRef = 0;
   vec->items = malloc(sizeof(void *) * vec->capacity);
 }
 
@@ -73,7 +76,7 @@ void *darrayPop(darray *vec) {
 }
 
 void darrayDelete(darray *vec, int index) {
-  assert(index > 0 && index < vec->size);
+  assert(index >= 0 && index < vec->size);
   if (vec->size <= vec->capacity / 4) {
     // half the capacity in resize
     darrayResize(vec, vec->capacity / 2);
@@ -117,6 +120,10 @@ void darrayPrint(char *format, darray *vec) {
 }
 
 void darrayDestroy(darray *vec) {
+  if (vec->storeHeapRef)
+    for (int i = 0; i < vec->size; i++)
+      free(vec->items[i]);
+
   free(vec->items);
   vec->items = NULL;
   vec->size = 0;

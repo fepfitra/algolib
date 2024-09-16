@@ -1,10 +1,13 @@
+#include <stdbool.h>
+
 typedef struct {
   void **items;
   unsigned int size;
   unsigned int capacity;
+  bool storeHeap;
 } darray;
 
-void darrayInit(darray *vec);
+void darrayInit(darray *vec, bool asRef);
 
 void darrayPush(darray *vec, void *item);
 
