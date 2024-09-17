@@ -37,18 +37,19 @@ darray *parseLine(char *line) {
   return parsedLine;
 }
 
-void readLines(dataFrame *df, char *fileName, unsigned int fileSize,
-               unsigned int bufferSize) {
+dataFrame *dataFrameFromLines(char *ptr, unsigned int size,
+                              unsigned int bufferSize) {
   char buffer[bufferSize];
-  char *ptr = fileName;
-  char delim;
-  unsigned int counter = 0;
+  char *ptrTmp = ptr;
 
-  while (ptr < fileName + fileSize) {
-    int chars_read = sscanf(ptr, "%[^\n]", buffer);
-    ptr += strlen(buffer) + 1;
+  dataFrame *df = dataFrameNew();
+  if (df == NULL) {
+    return NULL;
+  }
 
-    counter++;
+  while (ptrTmp < ptr + size) {
+    int chars_read = sscanf(ptrTmp, "%[^\n]", buffer);
+    ptrTmp += strlen(buffer) + 1;
     darray *parsed = parseLine(buffer);
 
 #ifdef DEBUG
@@ -58,20 +59,17 @@ void readLines(dataFrame *df, char *fileName, unsigned int fileSize,
 
     darrayPush(df->rows, parsed);
   }
-  df->header = (darray *)darrayAt(df->rows, 0);
-  darrayDelete(df->rows, 0);
 
 #ifdef DEBUG
   fprintf(stderr, "Loaded %d x %d\n", df->rows->size, df->header->size);
 #endif
+  return df;
 }
 
 dataFrame *dataFrameFromCSV(const char *fileName, unsigned int bufferSize) {
   char *f;
   unsigned int size;
   struct stat s;
-
-  dataFrame *df = dataFrameNew();
 
   int fd = open(fileName, O_RDONLY);
   if (fd == -1) {
@@ -93,9 +91,10 @@ dataFrame *dataFrameFromCSV(const char *fileName, unsigned int bufferSize) {
     return NULL;
   }
 
-  readLines(df, f, size, bufferSize);
+  dataFrame *df = dataFrameFromLines(f, size, bufferSize);
 
   munmap(f, size);
   close(fd);
   return df;
 }
+
