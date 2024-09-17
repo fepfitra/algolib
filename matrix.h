@@ -18,6 +18,7 @@ matrix *matrixLoad(const char *filename);
 void matrixRandomize(matrix *mat, int n);
 int matrixArgmax(matrix *mat);
 matrix *matrixFlatten(matrix *mat, int axis);
+matrix *matrixSlice(matrix *mat, int rowStart, int rowEnd, int colStart, int colEnd);
 
 matrix *matrixMultiply(matrix *a, matrix *b);
 matrix *matrixAdd(matrix *a, matrix *b);

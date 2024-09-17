@@ -344,3 +344,13 @@ matrix *matrixTranspose(matrix *a) {
   }
   return c;
 }
+
+matrix *matrixSlice(matrix *mat, int rowStart, int rowEnd, int colStart, int colEnd) {
+  matrix *mat2 = matrixNew(rowEnd - rowStart, colEnd - colStart);
+  for (int i = rowStart; i < rowEnd; i++) {
+    for (int j = colStart; j < colEnd; j++) {
+      mat2->items[i - rowStart][j - colStart] = mat->items[i][j];
+    }
+  }
+  return mat2;
+}
