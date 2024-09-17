@@ -16,6 +16,16 @@ matrix *matrixNew(unsigned int rows, unsigned int cols) {
   return mat;
 }
 
+matrix *matrixFromDataFrame(dataFrame *df) {
+  matrix *mat = matrixNew(df->rows->size, df->header->size);
+  for (int i = 0; i < df->rows->size; i++) {
+    for (int j = 0; j < df->header->size; j++) {
+      mat->items[i][j] = atof(darrayAt(darrayAt(df->rows, i), j));
+    }
+  }
+  return mat;
+}
+
 void matrixFill(matrix *mat, double value) {
   for (int i = 0; i < mat->rows; i++) {
     for (int j = 0; j < mat->cols; j++) {

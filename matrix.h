@@ -1,3 +1,4 @@
+#include "dataFrame.h"
 #pragma once
 
 typedef struct {
@@ -7,6 +8,7 @@ typedef struct {
 } matrix;
 
 matrix *matrixNew(unsigned int rows, unsigned int cols);
+matrix *matrixFromDataFrame(dataFrame *df);
 void matrixFill(matrix *mat, double value);
 void matrixDestroy(matrix *mat);
 void matrixPrint(matrix *mat);
