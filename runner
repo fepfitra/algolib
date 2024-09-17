@@ -6,13 +6,47 @@ if [ $1 = "clean" ]; then
 fi
 
 if [ $1 = "darray" ]; then
-  ls ./darray.test.c | entr -c ./run ./darray.test.c ./darray.c
-  exit 0
+  if [ $2 = "watch" ]; then
+    ls ./darray.test.c | entr -c ./run ./darray.test.c ./darray.c
+    exit 0
+  fi
+
+  if [ $2 = "wdebug" ]; then
+    ls ./darray.test.c | entr -c ./run ./darray.test.c ./darray.c -DDEBUG
+    exit 0
+  fi
+
+  if [ $2 = "run" ]; then
+    ./run ./darray.test.c ./darray.c
+    exit 0
+  fi
+
+  if [ $2 = "rdebug" ]; then
+    ./run ./darray.test.c ./darray.c -DDEBUG
+    exit 0
+  fi
 fi
 
 if [ $1 = "dataFrame" ]; then
-  ls ./dataFrame.test.c | entr -c ./run ./dataFrame.test.c ./dataFrame.c ./darray.c
-  exit 0
+  if [ $2 = "watch" ]; then
+    ls ./dataFrame.test.c | entr -c ./run ./dataFrame.test.c ./dataFrame.c ./darray.c
+    exit 0
+  fi
+
+  if [ $2 = "wdebug" ]; then
+    ls ./dataFrame.test.c | entr -c ./run ./dataFrame.test.c ./dataFrame.c ./darray.c -DDEBUG
+    exit 0
+  fi
+
+  if [ $2 = "run" ]; then
+    ./run ./dataFrame.test.c ./dataFrame.c ./darray.c
+    exit 0
+  fi
+
+  if [ $2 = "rdebug" ]; then
+    ./run ./dataFrame.test.c ./dataFrame.c ./darray.c -DDEBUG
+    exit 0
+  fi
 fi
 
-echo "Usage: ./runner [clean|darray|dataFrame]"
+echo "Usage: ./runner [clean|darray|dataFrame] [watch|wdebug|run|rdebug]"
