@@ -98,3 +98,9 @@ dataFrame *dataFrameFromCSV(const char *fileName, unsigned int bufferSize) {
   return df;
 }
 
+
+void dataFramePrepareHeader(dataFrame *df, darray *header) {
+  df->header = header;
+  darrayDelete(df->rows, 0);
+}
+
