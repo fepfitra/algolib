@@ -1,3 +1,4 @@
+#include "dataFrame.h"
 #include "darray.h"
 #include <fcntl.h>
 #include <stdbool.h>
@@ -7,11 +8,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-typedef struct {
-  darray *header;
-  darray *rows;
-} dataFrame;
 
 dataFrame *dataFrameNew() {
   dataFrame *df = malloc(sizeof(dataFrame));
@@ -98,9 +94,8 @@ dataFrame *dataFrameFromCSV(const char *fileName, unsigned int bufferSize) {
   return df;
 }
 
-
-void dataFramePrepareHeader(dataFrame *df, darray *header) {
-  df->header = header;
+void dataFramePrepareHeader(dataFrame *df) {
+  df->header = darrayAt(df->rows, 0);
   darrayDelete(df->rows, 0);
 }
 
