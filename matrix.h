@@ -14,6 +14,7 @@ void matrixDestroy(matrix *mat);
 void matrixPrint(matrix *mat);
 void matrixCopy(matrix *src, matrix *dst);
 void matrixSave(matrix *mat, const char *filename);
+void matrixShuffle(matrix *mat, int state);
 matrix *matrixLoad(const char *filename);
 void matrixRandomize(matrix *mat, int n);
 int matrixArgmax(matrix *mat);
