@@ -62,7 +62,7 @@ void readLines(dataFrame *df, char *fileName, unsigned int fileSize,
   darrayDelete(df->rows, 0);
 
 #ifdef DEBUG
-  fprintf(stderr, "Loaded %d x %d\n", df->rows->size, df->columns->size);
+  fprintf(stderr, "Loaded %d x %d\n", df->rows->size, df->header->size);
 #endif
 }
 

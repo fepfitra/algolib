@@ -1,7 +1,7 @@
 #include "darray.h"
 
 typedef struct {
-  darray *columns;
+  darray *header;
   darray *rows;
 } dataFrame;
 
