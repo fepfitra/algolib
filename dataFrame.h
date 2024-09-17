@@ -3,7 +3,7 @@
 typedef struct {
   darray *columns;
   darray *rows;
-} dataFrame ;
+} dataFrame;
 
-void dataFrameInit(dataFrame *df);
-void dataFrameLoadFromCSV(dataFrame *df, const char *fileName, unsigned int bufferSize);
+dataFrame *dataFrameNew();
+dataFrame *dataFrameFromCSV(const char *fileName, unsigned int bufferSize);
