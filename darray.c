@@ -121,3 +121,8 @@ void darrayDestroy(darray *vec) {
   vec->capacity = 0x0;
   free(vec);
 }
+
+void darraySet(darray *vec, unsigned int index, void *item) {
+  assert(index < vec->size);
+  vec->items[index] = item;
+}
