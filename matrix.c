@@ -332,7 +332,7 @@ matrix *matrixScale(matrix *a, double n) {
   return c;
 }
 
-matrix *MatrixAddScalar(matrix *a, double n) {
+matrix *matrixAddScalar(matrix *a, double n) {
   matrix *c = matrixNew(a->rows, a->cols);
   for (int i = 0; i < a->rows; i++) {
     for (int j = 0; j < a->cols; j++) {
