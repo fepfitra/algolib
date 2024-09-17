@@ -13,3 +13,4 @@ void dataFrameDestroy(dataFrame *df);
 void dataFramePrint(dataFrame *df, unsigned int n);
 void dataFramePrintHeader(dataFrame *df);
 void dataFramePrintRow(dataFrame *df, unsigned int offset, unsigned int range);
+void dataFrameReplace(dataFrame *df, const char *column, const char *oldValue, const char *newValue);
