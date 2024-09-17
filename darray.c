@@ -11,10 +11,12 @@ typedef struct {
 
 const unsigned int DARRAY_INIT_CAPACITY = 0x10;
 
-void darrayInit(darray *vec) {
+darray *darrayNew() {
+  darray *vec = malloc(sizeof(darray));
   vec->capacity = DARRAY_INIT_CAPACITY;
   vec->size = 0;
   vec->items = malloc(sizeof(void *) * vec->capacity);
+  return vec;
 }
 
 void *darrayAt(darray *vec, unsigned int index) {
@@ -122,4 +124,5 @@ void darrayDestroy(darray *vec) {
   vec->items = NULL;
   vec->size = 0;
   vec->capacity = 0x0;
+  free(vec);
 }
