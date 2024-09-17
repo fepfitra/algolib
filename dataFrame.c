@@ -123,6 +123,12 @@ void dataFramePrint(dataFrame *df, unsigned int n) {
 
 void dataFramePrintHeader(dataFrame *df) { darrayPrint("%s", df->header); }
 
-void dataFramePrintRow(dataFrame *df, unsigned int n) {
-  darrayPrint("%s", darrayAt(df->rows, n));
+void dataFramePrintRow(dataFrame *df, unsigned int offset, unsigned int range) {
+  if (offset + range > df->rows->size) {
+    range = df->rows->size - offset;
+  }
+
+  for (int i = offset; i < offset + range; i++) {
+    darrayPrint("%s", darrayAt(df->rows, i));
+  }
 }
