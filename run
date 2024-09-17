@@ -1,3 +1,6 @@
+#!/bin/sh
+
 gcc $@
+#echo "Index,Customer Id,First Name,Last Name,Company,\"City,country\",Country,Phone 1,Phone 2,Email,Subscription Date,Website" | ./a.out
 ./a.out
 rm ./a.out

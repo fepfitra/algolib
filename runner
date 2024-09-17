@@ -1,1 +1,16 @@
-ls $1 | entr -c ./run $@
+#!/bin/sh
+
+if [ $1 = "clean" ]; then
+  rm ./a.out
+  exit 0
+fi
+
+if [ $1 = "darray" ]; then
+  ls ./darray.test.c | entr -c ./run ./darray.test.c ./darray.c
+  exit 0
+fi
+
+if [ $1 = "dataFrame" ]; then
+  ls ./dataFrame.test.c | entr -c ./run ./dataFrame.test.c ./dataFrame.c ./darray.c
+  exit 0
+fi
