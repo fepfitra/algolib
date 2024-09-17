@@ -9,13 +9,13 @@
 #include <unistd.h>
 
 typedef struct {
-  darray *columns;
+  darray *header;
   darray *rows;
 } dataFrame;
 
 dataFrame *dataFrameNew() {
   dataFrame *df = malloc(sizeof(dataFrame));
-  df->columns = darrayNew();
+  df->header = darrayNew();
   df->rows = darrayNew();
   return df;
 }
@@ -58,7 +58,7 @@ void readLines(dataFrame *df, char *fileName, unsigned int fileSize,
 
     darrayPush(df->rows, parsed);
   }
-  df->columns = (darray *)darrayAt(df->rows, 0);
+  df->header = (darray *)darrayAt(df->rows, 0);
   darrayDelete(df->rows, 0);
 
 #ifdef DEBUG
