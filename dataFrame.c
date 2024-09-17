@@ -133,9 +133,44 @@ void dataFramePrintRow(dataFrame *df, unsigned int offset, unsigned int range) {
   }
 }
 
-void dataFrameReplace(dataFrame *df, const char *column, const char *oldValue,
-                      const char *newValue) {
-  int columnIndex;
+// void dataFrameReplace(dataFrame *df, const char *column, const char
+// *oldValue,
+//                       const char *newValue) {
+//   int columnIndex;
+//   for (int i = 0; i < df->header->size; i++) {
+//     if (strcmp(darrayAt(df->header, i), column) == 0) {
+//       columnIndex = i;
+//       break;
+//     }
+//   }
+//   if (columnIndex == -1) {
+//     fprintf(stderr, "Column %s not found\n", column);
+//     return;
+//   }
+//
+//   for (int i = 0; i < df->rows->size; i++) {
+//     darray *row = darrayAt(df->rows, i);
+//     if (strcmp(darrayAt(row, columnIndex), oldValue) == 0) {
+//       free(darrayAt(row, columnIndex));
+//       darraySet(row, columnIndex, strdup(newValue));
+//     }
+//   }
+// }
+//
+void dataFrameReplaceByIndex(dataFrame *df, unsigned int column,
+                             const char *oldValue, const char *newValue) {
+  for (int i = 0; i < df->rows->size; i++) {
+    darray *row = darrayAt(df->rows, i);
+    if (strcmp(darrayAt(row, column), oldValue) == 0) {
+      free(darrayAt(row, column));
+      darraySet(row, column, strdup(newValue));
+    }
+  }
+}
+
+void dataFrameReplaceByString(dataFrame *df, const char *column,
+                              const char *oldValue, const char *newValue) {
+  int columnIndex = -1;
   for (int i = 0; i < df->header->size; i++) {
     if (strcmp(darrayAt(df->header, i), column) == 0) {
       columnIndex = i;
@@ -147,11 +182,5 @@ void dataFrameReplace(dataFrame *df, const char *column, const char *oldValue,
     return;
   }
 
-  for (int i = 0; i < df->rows->size; i++) {
-    darray *row = darrayAt(df->rows, i);
-    if (strcmp(darrayAt(row, columnIndex), oldValue) == 0) {
-      free(darrayAt(row, columnIndex));
-      darraySet(row, columnIndex, strdup(newValue));
-    }
-  }
+  dataFrameReplaceByIndex(df, columnIndex, oldValue, newValue);
 }
