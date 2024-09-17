@@ -44,10 +44,9 @@ int main() {
   printf("Test string darray\n");
   darray vec2;
   darrayInit(&vec2);
-  vec2.asRef = 1;
-  for (int i=0; i<100000; i++) {
+  for (int i=0; i<10; i++) {
     printf("Pushing %d\n", i);
-    darrayPush(&vec2, (void *)strdup("Hello"));
+    darrayPush(&vec2, (void *)strdup("Hello Bang"));
   }
   darrayPrint("%s", &vec2);
   

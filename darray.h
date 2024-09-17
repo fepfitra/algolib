@@ -7,7 +7,7 @@ typedef struct {
   bool storeHeap;
 } darray;
 
-void darrayInit(darray *vec, bool asRef);
+void darrayInit(darray *vec);
 
 void darrayPush(darray *vec, void *item);
 

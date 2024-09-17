@@ -7,15 +7,13 @@ typedef struct {
   void **items;
   unsigned int size;
   unsigned int capacity;
-  bool storeHeapRef;
 } darray;
 
 const unsigned int DARRAY_INIT_CAPACITY = 0x10;
 
-void darrayInit(darray *vec, bool storeHeapRef) {
+void darrayInit(darray *vec) {
   vec->capacity = DARRAY_INIT_CAPACITY;
   vec->size = 0;
-  vec->storeHeapRef = 0;
   vec->items = malloc(sizeof(void *) * vec->capacity);
 }
 
@@ -120,10 +118,6 @@ void darrayPrint(char *format, darray *vec) {
 }
 
 void darrayDestroy(darray *vec) {
-  if (vec->storeHeapRef)
-    for (int i = 0; i < vec->size; i++)
-      free(vec->items[i]);
-
   free(vec->items);
   vec->items = NULL;
   vec->size = 0;
