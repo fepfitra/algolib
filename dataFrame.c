@@ -122,3 +122,7 @@ void dataFramePrint(dataFrame *df, unsigned int n) {
 }
 
 void dataFramePrintHeader(dataFrame *df) { darrayPrint("%s", df->header); }
+
+void dataFramePrintRow(dataFrame *df, unsigned int n) {
+  darrayPrint("%s", darrayAt(df->rows, n));
+}
