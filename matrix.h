@@ -9,6 +9,7 @@ typedef struct {
 
 matrix *matrixNew(unsigned int rows, unsigned int cols);
 matrix *matrixFromDataFrame(dataFrame *df);
+matrix *matrixFromMatrix(matrix *mat);
 void matrixFill(matrix *mat, double value);
 void matrixDestroy(matrix *mat);
 void matrixPrint(matrix *mat);

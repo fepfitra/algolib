@@ -46,6 +46,16 @@ matrix *matrixNew(unsigned int rows, unsigned int cols) {
   return mat;
 }
 
+matrix *matrixFromMatrix(matrix *mat) {
+  matrix *mat2 = matrixNew(mat->rows, mat->cols);
+  for (int i = 0; i < mat->rows; i++) {
+    for (int j = 0; j < mat->cols; j++) {
+      mat2->items[i][j] = mat->items[i][j];
+    }
+  }
+  return mat2;
+}
+
 matrix *matrixFromDataFrame(dataFrame *df) {
   matrix *mat = matrixNew(df->rows->size, df->header->size);
   for (int i = 0; i < df->rows->size; i++) {
@@ -132,7 +142,6 @@ matrix *matrixLoad(const char *filename) {
 
   // Create a new matrix with the read dimensions
   matrix *mat = matrixNew(rows, cols);
-  printf("%d x %d\n", mat->rows, mat->cols);
   if (mat == NULL) {
     perror("Error allocating memory for matrix");
     fclose(file);
@@ -150,8 +159,6 @@ matrix *matrixLoad(const char *filename) {
   }
 
   fclose(file);
-  matrixPrint(mat);
-  printf("Loaded %d x %d\n", mat->rows, mat->cols);
   return mat;
 }
 
@@ -353,4 +360,14 @@ matrix *matrixSlice(matrix *mat, int rowStart, int rowEnd, int colStart, int col
     }
   }
   return mat2;
+}
+
+void matrixShuffle(matrix *mat, int state) {
+  srand(state);
+  for (int i = 0; i < mat->rows; i++) {
+    int j = rand() % mat->rows;
+    double *temp = mat->items[i];
+    mat->items[i] = mat->items[j];
+    mat->items[j] = temp;
+  }
 }
