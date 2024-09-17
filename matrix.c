@@ -5,12 +5,42 @@
 
 #define MAX_CHAR 1024
 
+// matrix *matrixNew(unsigned int rows, unsigned int cols) {
+//   matrix *mat = malloc(sizeof(matrix));
+//   mat->items = malloc(rows * sizeof(double *));
+//   for (int i = 0; i < rows; i++) {
+//     mat->items[i] = malloc(cols * sizeof(double));
+//   }
+//   mat->rows = rows;
+//   mat->cols = cols;
+//   return mat;
+// }
+
 matrix *matrixNew(unsigned int rows, unsigned int cols) {
   matrix *mat = malloc(sizeof(matrix));
-  mat->items = malloc(rows * sizeof(double *));
-  for (int i = 0; i < rows; i++) {
-    mat->items[i] = malloc(cols * sizeof(double));
+  if (mat == NULL) {
+    return NULL; // Error in matrix allocation
   }
+
+  mat->items = malloc(rows * sizeof(double *));
+  if (mat->items == NULL) {
+    free(mat);
+    return NULL; // Error in row allocation
+  }
+
+  for (unsigned int i = 0; i < rows; i++) {
+    mat->items[i] = malloc(cols * sizeof(double));
+    if (mat->items[i] == NULL) {
+      // Free all previously allocated rows
+      for (unsigned int j = 0; j < i; j++) {
+        free(mat->items[j]);
+      }
+      free(mat->items);
+      free(mat);
+      return NULL; // Error in column allocation
+    }
+  }
+
   mat->rows = rows;
   mat->cols = cols;
   return mat;
@@ -72,6 +102,8 @@ void matrixSave(matrix *mat, const char *filename) {
     exit(EXIT_FAILURE);
   }
 
+  fprintf(file, "%d %d\n", mat->rows, mat->cols);
+
   for (int i = 0; i < mat->rows; i++) {
     for (int j = 0; j < mat->cols; j++) {
       fprintf(file, "%f ", mat->items[i][j]);
@@ -80,6 +112,77 @@ void matrixSave(matrix *mat, const char *filename) {
   }
   fclose(file);
 }
+
+matrix *matrixLoad(const char *filename) {
+  FILE *file = fopen(filename, "r");
+  if (file == NULL) {
+    perror("Error opening file");
+    exit(EXIT_FAILURE);
+  }
+
+  unsigned int rows = 0;
+  unsigned int cols = 0;
+
+  // Read matrix dimensions
+  if (fscanf(file, "%u %u", &rows, &cols) != 2) {
+    fprintf(stderr, "Error reading matrix dimensions\n");
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+
+  // Create a new matrix with the read dimensions
+  matrix *mat = matrixNew(rows, cols);
+  printf("%d x %d\n", mat->rows, mat->cols);
+  if (mat == NULL) {
+    perror("Error allocating memory for matrix");
+    fclose(file);
+    exit(EXIT_FAILURE);
+  }
+
+  // Read matrix items
+  for (int i = 0; i < rows * cols; i++) {
+    if (fscanf(file, "%lf", &mat->items[i / cols][i % cols]) != 1) {
+      fprintf(stderr, "Error reading matrix item at row %d, col %d\n", i / cols,
+              i % cols);
+      fclose(file);
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  fclose(file);
+  matrixPrint(mat);
+  printf("Loaded %d x %d\n", mat->rows, mat->cols);
+  return mat;
+}
+
+// matrix *matrixLoad(const char *filename) {
+//   FILE *file = fopen(filename, "r");
+//   if (file == NULL) {
+//     perror("Error opening file");
+//     exit(EXIT_FAILURE);
+//   }
+//
+//   char line[MAX_CHAR];
+//   unsigned int rows = 0;
+//   unsigned int cols = 0;
+//   if (fscanf(file, "%d %d", &rows, &cols) != 2) {
+//     printf("%d %d\n", rows, cols);
+//     perror("Error reading matrix dimensions");
+//     fclose(file);
+//     exit(EXIT_FAILURE);
+//   }
+//   matrix *mat = matrixNew(rows, cols);
+//
+//   for (int i = 0; i < rows * cols; i++) {
+//     if (fscanf(file, "%lf", &mat->items[i / cols][i % cols]) != 1) {
+//       perror("Error reading matrix item");
+//       fclose(file);
+//       exit(EXIT_FAILURE);
+//     }
+//   }
+//   fclose(file);
+//   return mat;
+// }
 
 double uniformDistribution(double low, double high) {
   double diff = high - low;
