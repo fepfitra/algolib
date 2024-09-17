@@ -111,3 +111,13 @@ void dataFrameDestroy(dataFrame *df) {
   darrayDestroy(df->header);
   free(df);
 }
+
+void dataFramePrint(dataFrame *df, unsigned int n) {
+  if (n > df->rows->size) {
+    n = df->rows->size;
+  }
+
+  for (int i = 0; i < n; i++) {
+    darrayPrint("%s", darrayAt(df->rows, i));
+  }
+}
