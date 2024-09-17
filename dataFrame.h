@@ -13,5 +13,8 @@ void dataFrameDestroy(dataFrame *df);
 void dataFramePrint(dataFrame *df, unsigned int n);
 void dataFramePrintHeader(dataFrame *df);
 void dataFramePrintRow(dataFrame *df, unsigned int offset, unsigned int range);
+void dataFramePrintColumn(dataFrame *df, const char *column, unsigned int offset, unsigned int range);
+void dataFramePrintUniqueByString(dataFrame *df, const char *column);
+void dataFramePrintUniqueByIndex(dataFrame *df, unsigned int column);
 void dataFrameReplaceByString(dataFrame *df, const char *column, const char *oldValue, const char *newValue);
 void dataFrameReplaceByIndex(dataFrame *df, unsigned int column, const char *oldValue, const char *newValue);

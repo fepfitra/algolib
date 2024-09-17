@@ -1,4 +1,5 @@
 #include "dataFrame.h"
+#include <ctype.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,11 +9,52 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+char *trimWhitespace(char *str) {
+  char *end;
+
+  // Trim leading spaces
+  while (isspace((unsigned char)*str))
+    str++;
+
+  if (*str == 0) // All spaces?
+    return str;
+
+  // Trim trailing spaces
+  end = str + strlen(str) - 1;
+  while (end > str && isspace((unsigned char)*end))
+    end--;
+
+  // Write new null terminator
+  *(end + 1) = 0;
+
+  return str;
+}
+
 dataFrame *dataFrameNew() {
   dataFrame *df = malloc(sizeof(dataFrame));
   df->header = darrayNew();
   df->rows = darrayNew();
   return df;
+}
+
+char *trimwhitespace(char *str)
+{
+  char *end;
+
+  // Trim leading space
+  while(isspace((unsigned char)*str)) str++;
+
+  if(*str == 0)  // All spaces?
+    return str;
+
+  // Trim trailing space
+  end = str + strlen(str) - 1;
+  while(end > str && isspace((unsigned char)*end)) end--;
+
+  // Write new null terminator character
+  end[1] = '\0';
+
+  return str;
 }
 
 darray *parseLine(char *line) {
@@ -24,11 +66,11 @@ darray *parseLine(char *line) {
       in_quotes = !in_quotes;
     } else if (*p == ',' && !in_quotes) {
       *p = '\0';
-      darrayPush(parsedLine, strdup(start));
+      darrayPush(parsedLine, strdup(trimwhitespace(start)));
       start = p + 1;
     }
   }
-  darrayPush(parsedLine, strdup(start));
+  darrayPush(parsedLine, strdup(trimwhitespace(start)));
   return parsedLine;
 }
 
@@ -133,30 +175,36 @@ void dataFramePrintRow(dataFrame *df, unsigned int offset, unsigned int range) {
   }
 }
 
-// void dataFrameReplace(dataFrame *df, const char *column, const char
-// *oldValue,
-//                       const char *newValue) {
-//   int columnIndex;
-//   for (int i = 0; i < df->header->size; i++) {
-//     if (strcmp(darrayAt(df->header, i), column) == 0) {
-//       columnIndex = i;
-//       break;
-//     }
-//   }
-//   if (columnIndex == -1) {
-//     fprintf(stderr, "Column %s not found\n", column);
-//     return;
-//   }
-//
-//   for (int i = 0; i < df->rows->size; i++) {
-//     darray *row = darrayAt(df->rows, i);
-//     if (strcmp(darrayAt(row, columnIndex), oldValue) == 0) {
-//       free(darrayAt(row, columnIndex));
-//       darraySet(row, columnIndex, strdup(newValue));
-//     }
-//   }
-// }
-//
+void dataFramePrintColumn(dataFrame *df, const char *column,
+                          unsigned int offset, unsigned int range) {
+  int columnIndex = -1;
+  for (int i = 0; i < df->header->size; i++) {
+    printf("Comparing %s with %s\n", darrayAt(df->header, i), column);
+    if (strcmp(darrayAt(df->header, i), column) == 0) {
+      columnIndex = i;
+      break;
+    }
+  }
+  if (columnIndex == -1) {
+    fprintf(stderr, "Column %s not found\n", column);
+    return;
+  }
+
+  if (offset + range > df->rows->size) {
+    range = df->rows->size - offset;
+  }
+
+  printf("[");
+  for (int i = offset; i < offset + range; i++) {
+    darray *row = darrayAt(df->rows, i);
+    printf("%s", darrayAt(row, columnIndex));
+    if (i < offset + range - 1) {
+      printf(", ");
+    }
+  }
+  printf("]");
+}
+
 void dataFrameReplaceByIndex(dataFrame *df, unsigned int column,
                              const char *oldValue, const char *newValue) {
   for (int i = 0; i < df->rows->size; i++) {
@@ -183,4 +231,51 @@ void dataFrameReplaceByString(dataFrame *df, const char *column,
   }
 
   dataFrameReplaceByIndex(df, columnIndex, oldValue, newValue);
+}
+
+void dataFramePrintUniqueByIndex(dataFrame *df, unsigned int column) {
+  darray *unique = darrayNew();
+  for (int i = 0; i < df->rows->size; i++) {
+    unsigned int isExists = 0;
+    darray *row = darrayAt(df->rows, i);
+    char *value = darrayAt(row, column);
+    for (int j = 0; j < unique->size; j++) {
+      if (strcmp(darrayAt(unique, j), value) == 0) {
+        isExists = 1;
+        break;
+        // printf("Value %s exists\n", value);
+      }
+    }
+    if (!isExists) {
+      darrayPush(unique, strdup(value));
+    }
+  }
+  printf("%s: ", darrayAt(df->header, column));
+  darrayPrint("%s", unique);
+  for (int j = 0; j < unique->size; j++) {
+    free(darrayAt(unique, j));
+  }
+  darrayDestroy(unique);
+}
+
+void dataFramePrintUniqueByString(dataFrame *df, const char *column) {
+  int columnIndex = -1;
+  for (int i = 0; i < df->header->size; i++) {
+    unsigned int res = strcmp(darrayAt(df->header, i), column);
+    // printf("Comparing %s: %d\n", darrayAt(df->header, i), res);
+    if (res == 0) {
+      columnIndex = i;
+      break;
+    }
+    // if (strcmp(darrayAt(df->header, i), column) == 0) {
+    //   columnIndex = i;
+    //   break;
+    // }
+  }
+  if (columnIndex == -1) {
+    fprintf(stderr, "Column %s not found\n", column);
+    return;
+  }
+
+  dataFramePrintUniqueByIndex(df, columnIndex);
 }
