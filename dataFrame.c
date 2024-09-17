@@ -104,3 +104,15 @@ void dataFramePrepareHeader(dataFrame *df, darray *header) {
   darrayDelete(df->rows, 0);
 }
 
+void dataFrameDestroy(dataFrame *df) {
+  for (int i = 0; i < df->rows->size; i++) {
+    darray *row = darrayAt(df->rows, i);
+    for (int j = 0; j < row->size; j++) {
+      free(darrayAt(row, j));
+    }
+    darrayDestroy(row);
+  }
+  darrayDestroy(df->rows);
+  darrayDestroy(df->header);
+  free(df);
+}
