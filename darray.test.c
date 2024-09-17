@@ -2,6 +2,18 @@
 #include <string.h>
 #include "darray.h"
 
+darray *someFunction(int i) {
+  darray *vec = darrayNew();
+  char str[10];
+  sprintf(str, "%d", i);
+  darrayPush(vec, strdup(str));
+  sprintf(str, "%d", i+1);
+  darrayPush(vec, strdup(str));
+  sprintf(str, "%d", i+2);
+  darrayPush(vec, strdup(str));
+  return vec;
+}
+
 int main() {
   printf("Initializing darray...\n");
   darray *vec = darrayNew();
@@ -47,6 +59,15 @@ int main() {
     darrayPush(vec2, (void *)strdup("Hello Bang"));
   }
   darrayPrint("%s", vec2);
+
+  darray *vec3 = darrayNew();
+  darrayPush(vec3, someFunction(1));
+  darrayPush(vec3, someFunction(2));
+  darrayPush(vec3, someFunction(3));
+  for (int i=0; i<vec3->size; i++) {
+    darrayPrint("%s", darrayAt(vec3, i));
+  }
+
   
   return 0;
 }

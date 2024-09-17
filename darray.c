@@ -21,7 +21,7 @@ darray *darrayNew() {
 
 void *darrayAt(darray *vec, unsigned int index) {
   assert(index < vec->size);
-  return *(vec->items + sizeof(void *) * index);
+  return vec->items[index];
 }
 
 void darrayResize(darray *vec, int new_size) {
