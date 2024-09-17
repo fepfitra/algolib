@@ -1,5 +1,4 @@
 #include "dataFrame.h"
-#include "darray.h"
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -121,3 +120,5 @@ void dataFramePrint(dataFrame *df, unsigned int n) {
     darrayPrint("%s", darrayAt(df->rows, i));
   }
 }
+
+void dataFramePrintHeader(dataFrame *df) { darrayPrint("%s", df->header); }
