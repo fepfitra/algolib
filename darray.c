@@ -2,12 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct {
-  void **items;
-  unsigned int size;
-  unsigned int capacity;
-} darray;
+#include "darray.h"
 
 const unsigned int DARRAY_INIT_CAPACITY = 0x10;
 

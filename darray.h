@@ -4,7 +4,6 @@ typedef struct {
   void **items;
   unsigned int size;
   unsigned int capacity;
-  bool storeHeap;
 } darray;
 
 darray *darrayNew();
