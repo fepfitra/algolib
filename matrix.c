@@ -5,18 +5,7 @@
 
 #define MAX_CHAR 1024
 
-// matrix *matrixNew(unsigned int rows, unsigned int cols) {
-//   matrix *mat = malloc(sizeof(matrix));
-//   mat->items = malloc(rows * sizeof(double *));
-//   for (int i = 0; i < rows; i++) {
-//     mat->items[i] = malloc(cols * sizeof(double));
-//   }
-//   mat->rows = rows;
-//   mat->cols = cols;
-//   return mat;
-// }
-
-matrix *matrixNew(unsigned int rows, unsigned int cols) {
+matrix *matrixNew(size_t rows, size_t cols) {
   matrix *mat = malloc(sizeof(matrix));
   if (mat == NULL) {
     return NULL; // Error in matrix allocation
@@ -66,21 +55,22 @@ matrix *matrixFromDataFrame(dataFrame *df) {
   return mat;
 }
 
-void matrixFill(matrix *mat, double value) {
+matrix *matrixFill(matrix *mat, double value) {
   for (int i = 0; i < mat->rows; i++) {
     for (int j = 0; j < mat->cols; j++) {
       mat->items[i][j] = value;
     }
   }
+  return mat;
 }
 
-void matrixDestroy(matrix *mat) {
+matrix *matrixDestroy(matrix *mat) {
   for (int i = 0; i < mat->rows; i++) {
     free(mat->items[i]);
   }
   free(mat->items);
   free(mat);
-  mat = NULL;
+  return NULL;
 }
 
 void matrixPrint(matrix *mat) {
@@ -162,35 +152,6 @@ matrix *matrixLoad(const char *filename) {
   return mat;
 }
 
-// matrix *matrixLoad(const char *filename) {
-//   FILE *file = fopen(filename, "r");
-//   if (file == NULL) {
-//     perror("Error opening file");
-//     exit(EXIT_FAILURE);
-//   }
-//
-//   char line[MAX_CHAR];
-//   unsigned int rows = 0;
-//   unsigned int cols = 0;
-//   if (fscanf(file, "%d %d", &rows, &cols) != 2) {
-//     printf("%d %d\n", rows, cols);
-//     perror("Error reading matrix dimensions");
-//     fclose(file);
-//     exit(EXIT_FAILURE);
-//   }
-//   matrix *mat = matrixNew(rows, cols);
-//
-//   for (int i = 0; i < rows * cols; i++) {
-//     if (fscanf(file, "%lf", &mat->items[i / cols][i % cols]) != 1) {
-//       perror("Error reading matrix item");
-//       fclose(file);
-//       exit(EXIT_FAILURE);
-//     }
-//   }
-//   fclose(file);
-//   return mat;
-// }
-
 double uniformDistribution(double low, double high) {
   double diff = high - low;
   int scale = 10000;
@@ -198,7 +159,7 @@ double uniformDistribution(double low, double high) {
   return low + (1.0 * (rand() % scaledDiff)) / scale;
 }
 
-void matrixRandomize(matrix *mat, int n) {
+matrix *matrixRandomize(matrix *mat, int n) {
   double low = -1.0 / sqrt(n);
   double high = 1.0 / sqrt(n);
   for (int i = 0; i < mat->rows; i++) {
@@ -206,6 +167,7 @@ void matrixRandomize(matrix *mat, int n) {
       mat->items[i][j] = uniformDistribution(low, high);
     }
   }
+  return mat;
 }
 
 int matrixArgmax(matrix *mat) {
@@ -222,7 +184,7 @@ int matrixArgmax(matrix *mat) {
   return argmax;
 }
 
-matrix *matrixFlatten(matrix *mat, int axis) {
+matrix *matrixFlatten(matrix *mat, size_t axis, size_t destroyArgs) {
   matrix *mat2;
   if (axis == 0) {
     mat2 = matrixNew(mat->rows * mat->cols, 1);
@@ -242,6 +204,9 @@ matrix *matrixFlatten(matrix *mat, int axis) {
       }
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(mat);
+  }
   return mat2;
 }
 
@@ -249,7 +214,7 @@ int matrixCheckDimenstions(matrix *a, matrix *b) {
   return a->rows == b->rows && a->cols == b->cols;
 }
 
-matrix *matrixMultiply(matrix *a, matrix *b) {
+matrix *matrixMultiply(matrix *a, matrix *b, size_t destroyArgs) {
   if (matrixCheckDimenstions(a, b)) {
     matrix *c = matrixNew(a->rows, a->cols);
     for (int i = 0; i < a->rows; i++) {
@@ -257,6 +222,10 @@ matrix *matrixMultiply(matrix *a, matrix *b) {
         c->items[i][j] = a->items[i][j] * b->items[i][j];
       }
     }
+    if (destroyArgs) {
+      matrixDestroy(a);
+      matrixDestroy(b);
+    }
     return c;
   } else {
     fprintf(stderr, "Matrix dimensions do not match\n");
@@ -264,7 +233,7 @@ matrix *matrixMultiply(matrix *a, matrix *b) {
   }
 }
 
-matrix *matrixAdd(matrix *a, matrix *b) {
+matrix *matrixAdd(matrix *a, matrix *b, size_t destroyArgs) {
   if (matrixCheckDimenstions(a, b)) {
     matrix *c = matrixNew(a->rows, a->cols);
     for (int i = 0; i < a->rows; i++) {
@@ -272,6 +241,10 @@ matrix *matrixAdd(matrix *a, matrix *b) {
         c->items[i][j] = a->items[i][j] + b->items[i][j];
       }
     }
+    if (destroyArgs) {
+      matrixDestroy(a);
+      matrixDestroy(b);
+    }
     return c;
   } else {
     fprintf(stderr, "Matrix dimensions do not match\n");
@@ -279,7 +252,7 @@ matrix *matrixAdd(matrix *a, matrix *b) {
   }
 }
 
-matrix *matrixSubtract(matrix *a, matrix *b) {
+matrix *matrixSubtract(matrix *a, matrix *b, size_t destroyArgs) {
   if (matrixCheckDimenstions(a, b)) {
     matrix *c = matrixNew(a->rows, a->cols);
     for (int i = 0; i < a->rows; i++) {
@@ -287,6 +260,10 @@ matrix *matrixSubtract(matrix *a, matrix *b) {
         c->items[i][j] = a->items[i][j] - b->items[i][j];
       }
     }
+    if (destroyArgs) {
+      matrixDestroy(a);
+      matrixDestroy(b);
+    }
     return c;
   } else {
     fprintf(stderr, "Matrix dimensions do not match\n");
@@ -294,17 +271,20 @@ matrix *matrixSubtract(matrix *a, matrix *b) {
   }
 }
 
-matrix *matrixApply(matrix *mat, double (*fn)(double)) {
+matrix *matrixApply(matrix *mat, double (*fn)(double), size_t destroyArgs) {
   matrix *mat2 = matrixNew(mat->rows, mat->cols);
   for (int i = 0; i < mat->rows; i++) {
     for (int j = 0; j < mat->cols; j++) {
       mat2->items[i][j] = (*fn)(mat->items[i][j]);
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(mat);
+  }
   return mat2;
 }
 
-matrix *matrixDot(matrix *a, matrix *b) {
+matrix *matrixDot(matrix *a, matrix *b, size_t destroyArgs) {
   if (a->cols != b->rows) {
     fprintf(stderr, "Matrix dimensions do not match\n");
     exit(EXIT_FAILURE);
@@ -319,40 +299,54 @@ matrix *matrixDot(matrix *a, matrix *b) {
       }
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(a);
+    matrixDestroy(b);
+  }
   return c;
 }
 
-matrix *matrixScale(matrix *a, double n) {
+matrix *matrixScale(matrix *a, double n, size_t destroyArgs) {
   matrix *c = matrixNew(a->rows, a->cols);
   for (int i = 0; i < a->rows; i++) {
     for (int j = 0; j < a->cols; j++) {
       c->items[i][j] = a->items[i][j] * n;
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(a);
+  }
   return c;
 }
 
-matrix *matrixAddScalar(matrix *a, double n) {
+matrix *matrixAddScalar(matrix *a, double n, size_t destroyArgs) {
   matrix *c = matrixNew(a->rows, a->cols);
   for (int i = 0; i < a->rows; i++) {
     for (int j = 0; j < a->cols; j++) {
       c->items[i][j] = a->items[i][j] + n;
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(a);
+  }
   return c;
 }
 
-matrix *matrixTranspose(matrix *a) {
+matrix *matrixTranspose(matrix *a, size_t destroyArgs) {
   matrix *c = matrixNew(a->cols, a->rows);
   for (int i = 0; i < a->rows; i++) {
     for (int j = 0; j < a->cols; j++) {
       c->items[j][i] = a->items[i][j];
     }
   }
+  if (destroyArgs) {
+    matrixDestroy(a);
+  }
   return c;
 }
 
-matrix *matrixSlice(matrix *mat, int rowStart, int rowEnd, int colStart, int colEnd) {
+matrix *matrixSlice(matrix *mat, size_t rowStart, size_t rowEnd, size_t colStart,
+                    size_t colEnd) {
   matrix *mat2 = matrixNew(rowEnd - rowStart, colEnd - colStart);
   for (int i = rowStart; i < rowEnd; i++) {
     for (int j = colStart; j < colEnd; j++) {
@@ -362,7 +356,7 @@ matrix *matrixSlice(matrix *mat, int rowStart, int rowEnd, int colStart, int col
   return mat2;
 }
 
-void matrixShuffle(matrix *mat, int state) {
+matrix *matrixShuffle(matrix *mat, int state, size_t destroyArgs) {
   srand(state);
   for (int i = 0; i < mat->rows; i++) {
     int j = rand() % mat->rows;
@@ -370,4 +364,8 @@ void matrixShuffle(matrix *mat, int state) {
     mat->items[i] = mat->items[j];
     mat->items[j] = temp;
   }
+  if (destroyArgs) {
+    matrixDestroy(mat);
+  }
+  return mat;
 }
