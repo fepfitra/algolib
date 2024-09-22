@@ -49,4 +49,70 @@ if [ $1 = "dataFrame" ]; then
   fi
 fi
 
-echo "Usage: ./runner [clean|darray|dataFrame] [watch|wdebug|run|rdebug]"
+if [ $1 = "matrix" ]; then
+  if [ $2 = "watch" ]; then
+    ls ./matrix.test.c | entr -c ./run ./matrix.test.c ./matrix.c ./darray.c ./dataFrame.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "wdebug" ]; then
+    ls ./matrix.test.c | entr -c ./run ./matrix.test.c ./matrix.c ./darray.c ./dataFrame.c -lm -DDEBUG
+    exit 0
+  fi
+
+  if [ $2 = "run" ]; then
+    ./run ./matrix.test.c ./matrix.c ./darray.c ./dataFrame.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "rdebug" ]; then
+    ./run ./matrix.test.c ./matrix.c ./darray.c ./dataFrame.c -lm -DDEBUG
+    exit 0
+  fi
+fi
+
+if [ $1 = "neuralNetwork" ]; then
+  if [ $2 = "watch" ]; then
+    ls ./neuralNetwork.test.c | entr -c ./run ./neuralNetwork.test.c ./neuralNetwork.c ./nnLayer.c ./matrix.c ./darray.c ./dataFrame.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "wdebug" ]; then
+    ls ./neuralNetwork.test.c | entr -c ./run ./neuralNetwork.test.c ./neuralNetwork.c ./nnLayer.c ./matrix.c ./darray.c ./dataFrame.c -lm -DDEBUG
+    exit 0
+  fi
+
+  if [ $2 = "run" ]; then
+    ./run ./neuralNetwork.test.c ./neuralNetwork.c ./matrix.c ./darray.c ./dataFrame.c ./nnLayer.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "rdebug" ]; then
+    ./run ./neuralNetwork.test.c ./neuralNetwork.c ./matrix.c ./darray.c ./dataFrame.c ./nnLayer.c -lm -DDEBUG
+    exit 0
+  fi
+fi
+
+if [ $1 = "queryParser" ]; then
+  if [ $2 = "watch" ]; then
+    ls ./queryParser.test.c | entr -c ./run ./queryParser.test.c ./queryParser.c ./matrix.c ./darray.c ./dataFrame.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "wdebug" ]; then
+    ls ./queryParser.test.c | entr -c ./run ./queryParser.test.c ./queryParser.c ./matrix.c ./darray.c ./dataFrame.c -lm -DDEBUG
+    exit 0
+  fi
+
+  if [ $2 = "run" ]; then
+    ./run ./queryParser.test.c ./queryParser.c ./matrix.c ./darray.c ./dataFrame.c -lm
+    exit 0
+  fi
+
+  if [ $2 = "rdebug" ]; then
+    ./run ./queryParser.test.c ./queryParser.c ./matrix.c ./darray.c ./dataFrame.c -lm -DDEBUG
+    exit 0
+  fi
+fi
+
+echo "Usage: ./runner [clean|darray|dataFrame|matrix] [watch|wdebug|run|rdebug]"

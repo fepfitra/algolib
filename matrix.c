@@ -369,3 +369,5 @@ matrix *matrixShuffle(matrix *mat, int state, size_t destroyArgs) {
   }
   return mat;
 }
+
+void matrixPrintDim(matrix *mat) { printf("%lu x %lu\n", mat->rows, mat->cols); }

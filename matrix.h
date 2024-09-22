@@ -14,6 +14,7 @@ matrix *matrixFromMatrix(matrix *mat);
 matrix *matrixFill(matrix *mat, double value);
 matrix *matrixDestroy(matrix *mat);
 void matrixPrint(matrix *mat);
+void matrixPrintDim(matrix *mat);
 void matrixCopy(matrix *src, matrix *dst);
 void matrixSave(matrix *mat, const char *filename);
 matrix *matrixShuffle(matrix *mat, int state, size_t destroyArgs);

@@ -179,7 +179,7 @@ void dataFramePrintColumn(dataFrame *df, const char *column,
                           unsigned int offset, unsigned int range) {
   int columnIndex = -1;
   for (int i = 0; i < df->header->size; i++) {
-    printf("Comparing %s with %s\n", darrayAt(df->header, i), column);
+    // printf("Comparing %s with %s\n", darrayAt(df->header, i), column);
     if (strcmp(darrayAt(df->header, i), column) == 0) {
       columnIndex = i;
       break;
